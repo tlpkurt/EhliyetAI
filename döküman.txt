@@ -1,0 +1,195 @@
+1. Proje Tanımı
+
+Ehliyet AI, kullanıcıların ehliyet teorik sınavına hazırlanmasını kolaylaştıran bir mobil uygulamadır. Uygulama, yapay zeka destekli soru çözme, deneme sınavları ve kişiye özel öğrenme sistemi ile kullanıcıların eksik konularını analiz ederek daha verimli bir çalışma deneyimi sunmayı amaçlamaktadır.
+
+Uygulama React Native kullanılarak geliştirilecektir ve hem Android hem iOS platformlarında çalışacaktır.
+
+
+2. Projenin Amacı
+
+Bu projenin temel amacı:
+	•	Ehliyet sınavına hazırlanan kullanıcıların kolay şekilde çalışabilmesini sağlamak
+	•	Kullanıcıların deneme sınavları çözmesini sağlamak
+	•	Yapay zeka ile yanlış yapılan konuları analiz etmek
+	•	Kullanıcılara kişiselleştirilmiş soru önerileri sunmak
+
+⸻
+
+3. Kullanılan Teknolojiler
+
+Mobil Uygulama
+	•	React Native
+	•	Expo veya React Native CLI
+	•	JavaScript / TypeScript
+
+Backend (Opsiyonel)
+	•	Node.js
+	•	Express.js
+	•	REST API
+
+Veritabanı
+	•	Firebase veya MongoDB
+
+Yapay Zeka
+	•	OpenAI API veya benzeri LLM
+	•	Kullanıcı performans analizi
+
+⸻
+
+
+
+
+
+
+
+
+4. Sistem Mimarisi
+
+Sistem üç ana bileşenden oluşmaktadır:
+
+1) Mobil Uygulama
+
+React Native ile geliştirilecek ve kullanıcı arayüzünü sağlayacaktır.
+
+2) Backend Sunucu
+
+Kullanıcı verileri, soru bankası ve analiz işlemleri burada yapılacaktır.
+
+3) AI Servisi
+
+Kullanıcıların çözmüş olduğu sorular analiz edilerek:
+	•	zayıf konular
+	•	önerilen sorular
+	•	çalışma planı
+
+oluşturulacaktır.
+
+⸻
+
+5. Uygulama Özellikleri
+
+5.1 Kullanıcı Giriş Sistemi
+
+Kullanıcılar uygulamaya:
+	•	Email
+	•	Google
+	•	veya misafir giriş
+
+ile giriş yapabilir.
+
+⸻
+
+5.2 Soru Çözme Modu
+
+Kullanıcılar ehliyet sınavına ait soruları çözebilir.
+
+Soru türleri:
+	•	Trafik
+	•	Motor
+	•	İlk yardım
+	•	Trafik adabı
+
+Sorular:
+	•	Çoktan seçmeli olacaktır
+	•	Anında doğru / yanlış gösterilecektir
+
+⸻5.3 Deneme Sınavı
+
+Gerçek ehliyet sınavına benzer şekilde:
+	•	50 soru
+	•	süreli sınav
+	•	sonuç ekranı
+
+özellikleri bulunacaktır.
+
+⸻
+
+5.4 Yapay Zeka Analizi
+
+AI sistemi kullanıcı performansını analiz edecektir.
+
+Örneğin:
+
+Kullanıcı trafik levhalarında hata yapıyorsa sistem:
+	•	o konudan daha fazla soru önerir
+	•	çalışma önerisi verir
+
+⸻
+
+5.5 İstatistik Paneli
+
+Kullanıcılar aşağıdaki bilgileri görebilir:
+	•	çözülen soru sayısı
+	•	doğru / yanlış oranı
+	•	en zayıf konular
+	•	gelişim grafiği
+
+⸻
+
+6. Kullanıcı Arayüzü
+
+Uygulamada aşağıdaki ekranlar olacaktır:
+
+Ana Menü
+	•	Soru çöz
+	•	Deneme sınavı
+	•	AI analiz
+	•	İstatistikler
+
+Soru Ekranı
+	•	soru metni
+	•	şıklar
+	•	cevap kontrol
+
+Sonuç Ekranı
+	•	doğru sayısı
+	•	yanlış sayısı
+	•	başarı oranı
+
+⸻
+
+7. Veri Yapısı
+
+Kullanıcı
+
+id
+isim
+email
+çözülen_soru
+doğru_sayısı
+yanlış_sayısı
+
+Sorular
+
+id
+kategori
+soru
+A
+B
+C
+D
+doğru_cevap
+
+
+⸻
+
+8. Yapay Zeka Çalışma Mantığı
+
+AI sistemi şu adımlarla çalışacaktır:
+	1.	Kullanıcının çözdüğü sorular kaydedilir
+	2.	Hangi konularda hata yaptığı analiz edilir
+	3.	Zayıf konular belirlenir
+	4.	Kullanıcıya yeni soru önerileri sunulur
+
+⸻
+
+9. Güvenlik
+
+Uygulamada aşağıdaki güvenlik önlemleri uygulanacaktır:
+	•	kullanıcı doğrulama
+	•	veri şifreleme
+	•	güvenli API kullanımı
+
+10. Sonuç
+
+Ehliyet AI uygulaması, ehliyet sınavına hazırlanan kullanıcılar için modern ve yapay zeka destekli bir öğrenme platformu sunmayı amaçlamaktadır. React Native kullanılması sayesinde uygulama hem Android hem iOS platformlarında erişilebilir olacaktır.
