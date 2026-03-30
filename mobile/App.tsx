@@ -1,33 +1,80 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+import { AIAnalysisScreen } from './src/screens/AIAnalysisScreen';
+import { HomeScreen } from './src/screens/HomeScreen';
+import { MockExamScreen } from './src/screens/MockExamScreen';
+import { ProfileScreen } from './src/screens/ProfileScreen';
+import { QuestionSolveScreen } from './src/screens/QuestionSolveScreen';
+
+type RootTabParamList = {
+  Home: undefined;
+  Lessons: undefined;
+  Tests: undefined;
+  AICoach: undefined;
+  Profile: undefined;
+};
+
+const Tab = createBottomTabNavigator<RootTabParamList>();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Ehliyet AI</Text>
-      <Text style={styles.subtitle}>Hafta 1: Bos uygulama kurulumu tamamlandi.</Text>
+    <NavigationContainer>
       <StatusBar style="dark" />
-    </View>
+      <Tab.Navigator
+        initialRouteName="Home"
+        screenOptions={({ route }) => ({
+          headerShown: false,
+          tabBarActiveTintColor: '#1f8bff',
+          tabBarInactiveTintColor: '#94a8c6',
+          tabBarLabelStyle: {
+            fontSize: 13,
+            fontWeight: '700',
+            marginBottom: 4,
+          },
+          tabBarStyle: {
+            height: 82,
+            paddingTop: 8,
+            paddingBottom: 10,
+            borderTopWidth: 1,
+            borderTopColor: '#d9e5f5',
+            backgroundColor: '#ffffff',
+          },
+          tabBarIcon: ({ color, size }) => {
+            const iconSize = size + 2;
+
+            if (route.name === 'Home') {
+              return <Ionicons name="home-outline" size={iconSize} color={color} />;
+            }
+
+            if (route.name === 'Lessons') {
+              return <Ionicons name="book-outline" size={iconSize} color={color} />;
+            }
+
+            if (route.name === 'Tests') {
+              return <Ionicons name="clipboard-outline" size={iconSize} color={color} />;
+            }
+
+            if (route.name === 'AICoach') {
+              return <Ionicons name="hardware-chip-outline" size={iconSize} color={color} />;
+            }
+
+            return <Ionicons name="person-outline" size={iconSize} color={color} />;
+          },
+        })}
+      >
+        <Tab.Screen name="Home" component={HomeScreen} options={{ title: 'Home', tabBarLabel: 'Home' }} />
+        <Tab.Screen
+          name="Lessons"
+          component={QuestionSolveScreen}
+          options={{ title: 'Lessons', tabBarLabel: 'Lessons' }}
+        />
+        <Tab.Screen name="Tests" component={MockExamScreen} options={{ title: 'Tests', tabBarLabel: 'Tests' }} />
+        <Tab.Screen name="AICoach" component={AIAnalysisScreen} options={{ title: 'AI Coach', tabBarLabel: 'AI Coach' }} />
+        <Tab.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile', tabBarLabel: 'Profile' }} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f4f7fb',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-  },
-  title: {
-    fontSize: 34,
-    fontWeight: '700',
-    color: '#1f2937',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#4b5563',
-    textAlign: 'center',
-  },
-});
