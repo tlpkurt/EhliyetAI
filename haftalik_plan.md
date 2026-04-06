@@ -17,6 +17,7 @@
 - Kullanici giris sistemi (Email, Google, Misafir)
 - Oturum yonetimi ve temel profil alanlari
 - Cikti: Login/logout ve kullanici durumunun korunmasi
+- Durum: Tamamlandi (06.04.2026)
 
 ## 4. Hafta
 - Soru veri modeli ve soru bankasi yapisi

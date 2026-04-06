@@ -1,7 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+
+import { useAuth } from '../context/AuthContext';
 
 export function HomeScreen() {
+  const { user } = useAuth();
+  const { width } = useWindowDimensions();
+  const isCompact = width < 390;
+  const isWide = width >= 768;
+
   const categories = [
     { label: 'Traffic', icon: 'car-sport-outline', tone: '#e9f2ff', iconColor: '#1f8bff' },
     { label: 'Engine', icon: 'construct-outline', tone: '#fff4e8', iconColor: '#ff8a1f' },
@@ -10,7 +17,7 @@ export function HomeScreen() {
   ] as const;
 
   return (
-    <ScrollView contentContainerStyle={styles.content} style={styles.container}>
+    <ScrollView contentContainerStyle={[styles.content, isWide && styles.contentWide]} style={styles.container}>
       <Text style={styles.pageHint}>Home Screen</Text>
 
       <View style={styles.topBar}>
@@ -20,9 +27,13 @@ export function HomeScreen() {
               <Ionicons name="person" size={18} color="#183153" />
             </View>
           </View>
-          <View>
-            <Text style={styles.greetingTitle}>Hello, Driver!</Text>
-            <Text style={styles.greetingSubtitle}>Ready to master the road?</Text>
+          <View style={styles.greetingWrap}>
+            <Text numberOfLines={1} style={[styles.greetingTitle, isCompact && styles.greetingTitleCompact]}>
+              Hello, {user?.profile.fullName || 'Driver'}!
+            </Text>
+            <Text numberOfLines={2} style={[styles.greetingSubtitle, isCompact && styles.greetingSubtitleCompact]}>
+              Ready to master the road?
+            </Text>
           </View>
         </View>
         <Pressable style={styles.bellButton}>
@@ -34,8 +45,8 @@ export function HomeScreen() {
         <Text style={styles.cardEyebrow}>DAILY GOAL</Text>
         <View style={styles.goalRow}>
           <View>
-            <Text style={styles.goalTitle}>Progress</Text>
-            <Text style={styles.goalSubtitle}>12/20 Questions Completed</Text>
+            <Text style={[styles.goalTitle, isCompact && styles.goalTitleCompact]}>Progress</Text>
+            <Text style={[styles.goalSubtitle, isCompact && styles.goalSubtitleCompact]}>12/20 Questions Completed</Text>
           </View>
           <View style={styles.progressRing}>
             <Text style={styles.progressValue}>65%</Text>
@@ -61,7 +72,7 @@ export function HomeScreen() {
         />
         <View style={styles.lessonBody}>
           <Text style={styles.cardEyebrow}>NEXT LESSON</Text>
-          <Text style={styles.lessonTitle}>Traffic Signs</Text>
+          <Text style={[styles.lessonTitle, isCompact && styles.lessonTitleCompact]}>Traffic Signs</Text>
           <Text style={styles.lessonText}>Learn the most common regulatory and warning signs.</Text>
           <Pressable style={styles.ctaButton}>
             <Text style={styles.ctaLabel}>Continue Learning</Text>
@@ -70,7 +81,7 @@ export function HomeScreen() {
       </View>
 
       <View style={styles.categoryHeader}>
-        <Text style={styles.categoryTitle}>Categories</Text>
+        <Text style={[styles.categoryTitle, isCompact && styles.categoryTitleCompact]}>Categories</Text>
         <Pressable>
           <Text style={styles.viewAll}>View All</Text>
         </Pressable>
@@ -101,6 +112,11 @@ const styles = StyleSheet.create({
     paddingBottom: 28,
     gap: 14,
   },
+  contentWide: {
+    width: '100%',
+    maxWidth: 820,
+    alignSelf: 'center',
+  },
   pageHint: {
     color: '#c5cdd8',
     fontSize: 14,
@@ -115,6 +131,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
+    flex: 1,
+    marginRight: 10,
+  },
+  greetingWrap: {
+    flex: 1,
   },
   avatarOuter: {
     width: 48,
@@ -133,15 +154,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   greetingTitle: {
-    fontSize: 33,
+    fontSize: 18,
     fontWeight: '700',
     color: '#04163a',
   },
+  greetingTitleCompact: {
+    fontSize: 16,
+  },
   greetingSubtitle: {
     marginTop: 2,
-    fontSize: 25,
+    fontSize: 12,
     color: '#5f7695',
     fontWeight: '500',
+    lineHeight: 18,
+  },
+  greetingSubtitleCompact: {
+    fontSize: 11,
+    lineHeight: 16,
   },
   bellButton: {
     width: 42,
@@ -180,15 +209,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   goalTitle: {
-    fontSize: 32,
+    fontSize: 18,
     fontWeight: '700',
     color: '#111827',
   },
+  goalTitleCompact: {
+    fontSize: 17,
+  },
   goalSubtitle: {
     marginTop: 6,
-    fontSize: 24,
+    fontSize: 14,
     color: '#4b5563',
     fontWeight: '500',
+    lineHeight: 20,
+  },
+  goalSubtitleCompact: {
+    fontSize: 13,
+    lineHeight: 18,
   },
   progressRing: {
     width: 68,
@@ -247,9 +284,12 @@ const styles = StyleSheet.create({
   },
   lessonTitle: {
     marginTop: 8,
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: '700',
     color: '#04163a',
+  },
+  lessonTitleCompact: {
+    fontSize: 20,
   },
   lessonText: {
     marginTop: 8,
@@ -276,9 +316,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   categoryTitle: {
-    fontSize: 26,
+    fontSize: 18,
     fontWeight: '700',
     color: '#04163a',
+  },
+  categoryTitleCompact: {
+    fontSize: 17,
   },
   viewAll: {
     fontSize: 16,

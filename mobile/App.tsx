@@ -2,9 +2,12 @@ import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
+import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { AIAnalysisScreen } from './src/screens/AIAnalysisScreen';
 import { HomeScreen } from './src/screens/HomeScreen';
+import { LoginScreen } from './src/screens/LoginScreen';
 import { MockExamScreen } from './src/screens/MockExamScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
 import { QuestionSolveScreen } from './src/screens/QuestionSolveScreen';
@@ -19,7 +22,21 @@ type RootTabParamList = {
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
-export default function App() {
+function MainNavigator() {
+  const { user, isInitializing } = useAuth();
+
+  if (isInitializing) {
+    return (
+      <View style={styles.loadingWrap}>
+        <ActivityIndicator size="large" color="#1f8bff" />
+      </View>
+    );
+  }
+
+  if (!user) {
+    return <LoginScreen />;
+  }
+
   return (
     <NavigationContainer>
       <StatusBar style="dark" />
@@ -78,3 +95,20 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <MainNavigator />
+    </AuthProvider>
+  );
+}
+
+const styles = StyleSheet.create({
+  loadingWrap: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#eef2ff',
+  },
+});
