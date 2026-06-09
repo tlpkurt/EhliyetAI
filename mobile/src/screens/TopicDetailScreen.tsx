@@ -71,7 +71,7 @@ export function TopicDetailScreen() {
         {topic.videoUrl ? (
           <View style={styles.videoPlaceholder}>
             <Text style={{ marginBottom: 10 }}>Video oynatıcı yer tutucusu</Text>
-            <Pressable style={styles.playButton} onPress={() => Linking.openURL(topic.videoUrl)}>
+            <Pressable style={styles.playButton} onPress={() => topic.videoUrl && Linking.openURL(topic.videoUrl)}>
               <Ionicons name="play" size={18} color="#ffffff" />
             </Pressable>
           </View>
@@ -116,4 +116,5 @@ const styles = StyleSheet.create({
   completeButton: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#9ca3af', padding: 12, borderRadius: 10, justifyContent: 'center', marginTop: 12 },
   completeActive: { backgroundColor: '#1f8bff' },
   completeLabel: { color: '#ffffff', fontWeight: '700' },
+  playButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#1f8bff', alignItems: 'center', justifyContent: 'center' },
 });

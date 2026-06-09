@@ -95,7 +95,7 @@ export function LessonDetailScreen() {
                 {topic.content ? <Text style={styles.topicDetail}>{topic.content}</Text> : topic.summary ? <Text style={styles.topicDetail}>{topic.summary}</Text> : null}
                 <View style={{ flexDirection: 'row', gap: 8, marginTop: 10, alignItems: 'center' }}>
                   {topic.videoUrl ? (
-                    <Pressable style={styles.playRow} onPress={() => Linking.openURL(topic.videoUrl)}>
+                    <Pressable style={styles.playRow} onPress={() => topic.videoUrl && Linking.openURL(topic.videoUrl)}>
                       <Ionicons name="play" size={18} color="#ffffff" />
                       <Text style={styles.playLabel}> Videoyu Aç</Text>
                     </Pressable>
