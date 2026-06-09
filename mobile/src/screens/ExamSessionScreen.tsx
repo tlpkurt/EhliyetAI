@@ -148,6 +148,43 @@ export function ExamSessionScreen() {
             </View>
           </View>
 
+          {examQuestions.some((q, i) => answers[i] !== q.dogruCevap) && (
+            <View style={styles.reviewSection}>
+              <Text style={styles.reviewTitle}>Yanlış ve Boş Sorularınız</Text>
+              {examQuestions.map((q, i) => {
+                const userAnswerIndex = answers[i];
+                const isCorrect = userAnswerIndex === q.dogruCevap;
+                
+                if (isCorrect) return null;
+                
+                const isUnanswered = userAnswerIndex === undefined;
+
+                return (
+                  <View key={i} style={styles.reviewCard}>
+                    <Text style={styles.reviewQuestionNumber}>Soru {i + 1}</Text>
+                    <Text style={styles.reviewQuestionText}>{q.soru}</Text>
+                    
+                    <View style={styles.reviewAnswers}>
+                      <View style={styles.reviewAnswerRow}>
+                        <Text style={styles.reviewAnswerLabel}>Sizin Cevabınız:</Text>
+                        <Text style={[styles.reviewAnswerValue, isUnanswered ? styles.unansweredText : styles.wrongText]}>
+                          {isUnanswered ? 'Boş bırakıldı' : q.secenekler[userAnswerIndex]}
+                        </Text>
+                      </View>
+                      
+                      <View style={styles.reviewAnswerRow}>
+                        <Text style={styles.reviewAnswerLabel}>Doğru Cevap:</Text>
+                        <Text style={[styles.reviewAnswerValue, styles.correctText]}>
+                          {q.secenekler[q.dogruCevap]}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          )}
+
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => navigation.navigate('MockExam')}
@@ -416,5 +453,70 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: '700',
     fontSize: 16,
+  },
+  reviewSection: {
+    marginTop: 32,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+    paddingTop: 24,
+  },
+  reviewTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#111827',
+    marginBottom: 16,
+  },
+  reviewCard: {
+    backgroundColor: '#f8fafc',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  reviewQuestionNumber: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#64748b',
+    marginBottom: 8,
+  },
+  reviewQuestionText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1e293b',
+    marginBottom: 16,
+  },
+  reviewAnswers: {
+    gap: 8,
+    backgroundColor: '#ffffff',
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  reviewAnswerRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  reviewAnswerLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#64748b',
+    width: 110,
+  },
+  reviewAnswerValue: {
+    fontSize: 14,
+    fontWeight: '700',
+    flex: 1,
+  },
+  unansweredText: {
+    color: '#6b7280',
+    fontStyle: 'italic',
+  },
+  wrongText: {
+    color: '#dc2626',
+  },
+  correctText: {
+    color: '#059669',
   },
 });
