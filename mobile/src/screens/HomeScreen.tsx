@@ -1,24 +1,83 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useCallback, useState } from 'react';
 
+import { CategoryArtwork } from '../components/CategoryArtwork';
 import { useAuth } from '../context/AuthContext';
+import { lessons } from '../data/lessonCatalog';
+import { getDailyStats } from '../data/dailyStats';
+import { getQuestionCountByCategory, questionCategories } from '../data/questionCatalog';
+import { questions } from '../data/questionBank';
 
 export function HomeScreen() {
   const { user } = useAuth();
+  const navigation = useNavigation<any>();
   const { width } = useWindowDimensions();
   const isCompact = width < 390;
   const isWide = width >= 768;
+  const [nextLessonId, setNextLessonId] = useState<string>(lessons[0]?.id ?? '');
+  const [nextLessonTitle, setNextLessonTitle] = useState<string>(lessons[0]?.title ?? 'Ders');
+  const [nextLessonHint, setNextLessonHint] = useState<string>('Kaldığın yerden devam et.');
+  const [dailyProgress, setDailyProgress] = useState({ done: 0, total: 3, percent: 0 });
 
-  const categories = [
-    { label: 'Traffic', icon: 'car-sport-outline', tone: '#e9f2ff', iconColor: '#1f8bff' },
-    { label: 'Engine', icon: 'construct-outline', tone: '#fff4e8', iconColor: '#ff8a1f' },
-    { label: 'First Aid', icon: 'medkit-outline', tone: '#ffeef0', iconColor: '#ff4d4f' },
-    { label: 'Etiquette', icon: 'leaf-outline', tone: '#e9fff2', iconColor: '#14b85c' },
-  ] as const;
+  const categoryStats = questionCategories.map((category) => ({
+    ...category,
+    count: getQuestionCountByCategory(questions, category.id),
+  }));
+
+  const loadNextLesson = useCallback(async () => {
+    try {
+      const raw = await AsyncStorage.getItem('completedTopics');
+      const completed = raw ? JSON.parse(raw) : {};
+
+      let selectedLesson = lessons[0];
+      let selectedTopicTitle = '';
+
+      for (const lesson of lessons) {
+        const nextTopic = lesson.topics.find((topic) => !completed[topic.id]);
+        if (nextTopic) {
+          selectedLesson = lesson;
+          selectedTopicTitle = nextTopic.title;
+          break;
+        }
+      }
+
+      if (selectedLesson) {
+        setNextLessonId(selectedLesson.id);
+        setNextLessonTitle(selectedLesson.title);
+        setNextLessonHint(
+          selectedTopicTitle ? `Sıradaki konu: ${selectedTopicTitle}` : 'Tüm konular tamamlandı, tekrar yap.'
+        );
+      }
+    } catch {
+      setNextLessonId(lessons[0]?.id ?? '');
+      setNextLessonTitle(lessons[0]?.title ?? 'Ders');
+      setNextLessonHint('Kaldığın yerden devam et.');
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadNextLesson();
+      getDailyStats().then(stats => {
+        let doneCount = 0;
+        if ((stats.lessons || 0) > 0) doneCount++;
+        if ((stats.exams || 0) > 0) doneCount++;
+        if ((stats.ai || 0) > 0) doneCount++;
+        setDailyProgress({
+          done: doneCount,
+          total: 3,
+          percent: Math.round((doneCount / 3) * 100)
+        });
+      });
+    }, [loadNextLesson])
+  );
 
   return (
     <ScrollView contentContainerStyle={[styles.content, isWide && styles.contentWide]} style={styles.container}>
-      <Text style={styles.pageHint}>Home Screen</Text>
+      <Text style={styles.pageHint}>Ana Sayfa</Text>
 
       <View style={styles.topBar}>
         <View style={styles.profileWrap}>
@@ -29,10 +88,10 @@ export function HomeScreen() {
           </View>
           <View style={styles.greetingWrap}>
             <Text numberOfLines={1} style={[styles.greetingTitle, isCompact && styles.greetingTitleCompact]}>
-              Hello, {user?.profile.fullName || 'Driver'}!
+              Merhaba, {user?.profile.fullName || 'Sürücü'}!
             </Text>
             <Text numberOfLines={2} style={[styles.greetingSubtitle, isCompact && styles.greetingSubtitleCompact]}>
-              Ready to master the road?
+              Yola hakim olmaya hazır mısın?
             </Text>
           </View>
         </View>
@@ -41,59 +100,71 @@ export function HomeScreen() {
         </Pressable>
       </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardEyebrow}>DAILY GOAL</Text>
+      <Pressable style={styles.card} onPress={() => navigation.navigate('Profile')}>
+        <Text style={styles.cardEyebrow}>GÜNLÜK HEDEF</Text>
         <View style={styles.goalRow}>
           <View>
-            <Text style={[styles.goalTitle, isCompact && styles.goalTitleCompact]}>Progress</Text>
-            <Text style={[styles.goalSubtitle, isCompact && styles.goalSubtitleCompact]}>12/20 Questions Completed</Text>
+            <Text style={[styles.goalTitle, isCompact && styles.goalTitleCompact]}>İlerleme</Text>
+            <Text style={[styles.goalSubtitle, isCompact && styles.goalSubtitleCompact]}>3 hedefin {dailyProgress.done}'i tamamlandı</Text>
           </View>
           <View style={styles.progressRing}>
-            <Text style={styles.progressValue}>65%</Text>
+            <Text style={styles.progressValue}>{dailyProgress.percent}%</Text>
           </View>
         </View>
-      </View>
+      </Pressable>
 
       <Pressable style={styles.suggestionCard}>
         <View style={styles.suggestionIconWrap}>
           <Ionicons name="bulb-outline" size={18} color="#ffffff" />
         </View>
         <View style={styles.suggestionTextWrap}>
-          <Text style={styles.suggestionTitle}>AI Suggestion</Text>
-          <Text style={styles.suggestionText}>Focus on First Aid today based on your last quiz results.</Text>
+          <Text style={styles.suggestionTitle}>Yapay Zeka Önerisi</Text>
+          <Text style={styles.suggestionText}>Son sınav sonucuna göre bugün ilk yardım konusuna odaklan.</Text>
         </View>
       </Pressable>
 
-      <View style={styles.cardNoPadding}>
+      <Pressable
+        style={styles.cardNoPadding}
+        onPress={() => navigation.navigate('Lessons', { screen: 'LessonDetail', params: { lessonId: nextLessonId } })}
+      >
         <Image
           source={require('../../assets/splash-icon.png')}
           resizeMode="cover"
           style={styles.lessonImage}
         />
         <View style={styles.lessonBody}>
-          <Text style={styles.cardEyebrow}>NEXT LESSON</Text>
-          <Text style={[styles.lessonTitle, isCompact && styles.lessonTitleCompact]}>Traffic Signs</Text>
-          <Text style={styles.lessonText}>Learn the most common regulatory and warning signs.</Text>
-          <Pressable style={styles.ctaButton}>
-            <Text style={styles.ctaLabel}>Continue Learning</Text>
+          <Text style={styles.cardEyebrow}>SIRADAKİ DERS</Text>
+          <Text style={[styles.lessonTitle, isCompact && styles.lessonTitleCompact]}>{nextLessonTitle}</Text>
+          <Text style={styles.lessonText}>{nextLessonHint}</Text>
+          <Pressable
+            style={styles.ctaButton}
+            onPress={() => navigation.navigate('Lessons', { screen: 'LessonDetail', params: { lessonId: nextLessonId } })}
+          >
+            <Text style={styles.ctaLabel}>Öğrenmeye Devam Et</Text>
           </Pressable>
         </View>
-      </View>
+      </Pressable>
 
       <View style={styles.categoryHeader}>
-        <Text style={[styles.categoryTitle, isCompact && styles.categoryTitleCompact]}>Categories</Text>
-        <Pressable>
-          <Text style={styles.viewAll}>View All</Text>
+        <Text style={[styles.categoryTitle, isCompact && styles.categoryTitleCompact]}>Kategoriler</Text>
+        <Pressable onPress={() => navigation.navigate('Tests')}>
+          <Text style={styles.viewAll}>Tümünü Gör</Text>
         </Pressable>
       </View>
 
       <View style={styles.categoryGrid}>
-        {categories.map((item) => (
-          <Pressable key={item.label} style={styles.categoryCard}>
-            <View style={[styles.categoryIconWrap, { backgroundColor: item.tone }]}>
-              <Ionicons name={item.icon} size={20} color={item.iconColor} />
+        {categoryStats.map((item) => (
+          <Pressable
+            key={item.id}
+            style={styles.categoryCard}
+            onPress={() => navigation.navigate('Tests', { screen: 'MockExam', params: { category: item.id } })}
+          >
+            <CategoryArtwork categoryId={item.id} title={item.title} />
+            <View style={styles.categoryBody}>
+              <Text style={styles.categoryLabel}>{item.title}</Text>
+              <Text style={styles.categoryDescription}>{item.description}</Text>
+              <Text style={styles.categoryCount}>{item.count} soru</Text>
             </View>
-            <Text style={styles.categoryLabel}>{item.label}</Text>
           </Pressable>
         ))}
       </View>
@@ -340,21 +411,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderWidth: 1,
     borderColor: '#edf2f9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 18,
-    gap: 10,
+    overflow: 'hidden',
   },
-  categoryIconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
+  categoryBody: {
+    paddingHorizontal: 14,
+    paddingTop: 12,
+    paddingBottom: 14,
+    gap: 4,
   },
   categoryLabel: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '700',
     color: '#04163a',
+  },
+  categoryDescription: {
+    fontSize: 12,
+    lineHeight: 17,
+    color: '#5f7695',
+    minHeight: 34,
+  },
+  categoryCount: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#1f8bff',
   },
 });

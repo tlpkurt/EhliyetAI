@@ -20,15 +20,15 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 function buildDefaultProfile(): UserProfile {
   return {
-    fullName: 'Ehliyet Adayi',
+    fullName: 'Ehliyet Adayı',
     email: '',
-    city: 'Istanbul',
+    city: 'İstanbul',
     licenseClass: 'B',
   };
 }
 
 function normalizeNameFromEmail(email: string): string {
-  const name = email.split('@')[0]?.trim() || 'Kullanici';
+  const name = email.split('@')[0]?.trim() || 'Kullanıcı';
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
@@ -72,11 +72,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const safeEmail = email.trim().toLowerCase();
 
     if (!safeEmail.includes('@')) {
-      throw new Error('Gecerli bir e-posta girin.');
+      throw new Error('Geçerli bir e-posta girin.');
     }
 
     if (password.trim().length < 4) {
-      throw new Error('Sifre en az 4 karakter olmali.');
+      throw new Error('Şifre en az 4 karakter olmalı.');
     }
 
     const nextUser: AuthUser = {
@@ -97,19 +97,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const safeEmail = email.trim().toLowerCase();
 
     if (safeFullName.length < 2) {
-      throw new Error('Ad soyad en az 2 karakter olmali.');
+      throw new Error('Ad soyad en az 2 karakter olmalı.');
     }
 
     if (!safeEmail.includes('@')) {
-      throw new Error('Gecerli bir e-posta girin.');
+      throw new Error('Geçerli bir e-posta girin.');
     }
 
     if (password.trim().length < 4) {
-      throw new Error('Sifre en az 4 karakter olmali.');
+      throw new Error('Şifre en az 4 karakter olmalı.');
     }
 
     if (password !== confirmPassword) {
-      throw new Error('Sifre ve sifre tekrar ayni olmali.');
+      throw new Error('Şifre ve şifre tekrar aynı olmalı.');
     }
 
     const nextUser: AuthUser = {
@@ -126,13 +126,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function loginWithGoogle() {
-    // OAuth entegrasyonu sonraki sprintte eklenecek, simdilik demo Google girisi saglanir.
+    // OAuth entegrasyonu sonraki sprintte eklenecek, şimdilik demo Google girişi sağlanır.
     const nextUser: AuthUser = {
       id: `google-${Date.now()}`,
       provider: 'google',
       profile: {
         ...buildDefaultProfile(),
-        fullName: 'Google Kullanici',
+        fullName: 'Google Kullanıcısı',
         email: 'driver.google@example.com',
       },
     };
@@ -146,7 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       provider: 'guest',
       profile: {
         ...buildDefaultProfile(),
-        fullName: 'Misafir Kullanici',
+        fullName: 'Misafir Kullanıcı',
       },
     };
 

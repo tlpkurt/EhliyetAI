@@ -25,7 +25,7 @@ export function LoginScreen() {
       if (loginError instanceof Error) {
         setError(loginError.message);
       } else {
-        setError('Giris yapilamadi. Tekrar deneyin.');
+        setError('Giriş yapılamadı. Tekrar deneyin.');
       }
     } finally {
       setIsLoading(false);
@@ -42,7 +42,7 @@ export function LoginScreen() {
       if (registerError instanceof Error) {
         setError(registerError.message);
       } else {
-        setError('Kayit islemi basarisiz. Tekrar deneyin.');
+        setError('Kayıt işlemi başarısız. Tekrar deneyin.');
       }
     } finally {
       setIsLoading(false);
@@ -74,11 +74,11 @@ export function LoginScreen() {
   return (
     <View style={styles.container}>
       <AppHeader
-        title="Ehliyet AI"
+        title="Ehliyet Asistanı"
         subtitle={
           mode === 'login'
-            ? 'Email, Google veya misafir girisi ile calismana kaldigin yerden devam et.'
-            : 'Hizli bir hesap olustur ve ilerlemeni kaydetmeye basla.'
+            ? 'E-posta, Google veya misafir girişi ile çalışmana kaldığın yerden devam et.'
+            : 'Hızlı bir hesap oluştur ve ilerlemeni kaydetmeye başla.'
         }
       />
 
@@ -88,13 +88,13 @@ export function LoginScreen() {
             onPress={() => setMode('login')}
             style={({ pressed }) => [styles.modeButton, mode === 'login' && styles.modeButtonActive, pressed && styles.pressed]}
           >
-            <Text style={[styles.modeButtonLabel, mode === 'login' && styles.modeButtonLabelActive]}>Giris Yap</Text>
+            <Text style={[styles.modeButtonLabel, mode === 'login' && styles.modeButtonLabelActive]}>Giriş Yap</Text>
           </Pressable>
           <Pressable
             onPress={() => setMode('register')}
             style={({ pressed }) => [styles.modeButton, mode === 'register' && styles.modeButtonActive, pressed && styles.pressed]}
           >
-            <Text style={[styles.modeButtonLabel, mode === 'register' && styles.modeButtonLabelActive]}>Kayit Ol</Text>
+            <Text style={[styles.modeButtonLabel, mode === 'register' && styles.modeButtonLabelActive]}>Kayıt Ol</Text>
           </Pressable>
         </View>
 
@@ -116,25 +116,25 @@ export function LoginScreen() {
           style={styles.input}
         />
 
-        <Text style={styles.label}>Sifre</Text>
+        <Text style={styles.label}>Şifre</Text>
         <TextInput
           secureTextEntry
           value={password}
           onChangeText={setPassword}
           editable={!isLoading}
-          placeholder="Sifre"
+          placeholder="Şifre"
           style={styles.input}
         />
 
         {mode === 'register' ? (
           <>
-            <Text style={styles.label}>Sifre Tekrar</Text>
+            <Text style={styles.label}>Şifre Tekrar</Text>
             <TextInput
               secureTextEntry
               value={confirmPassword}
               onChangeText={setConfirmPassword}
               editable={!isLoading}
-              placeholder="Sifre Tekrar"
+              placeholder="Şifre Tekrar"
               style={styles.input}
             />
           </>
@@ -149,7 +149,7 @@ export function LoginScreen() {
           {isLoading ? (
             <ActivityIndicator color="#ffffff" />
           ) : (
-            <Text style={styles.primaryButtonLabel}>{mode === 'login' ? 'Email ile Giris' : 'Email ile Kayit Ol'}</Text>
+            <Text style={styles.primaryButtonLabel}>{mode === 'login' ? 'E-posta ile Giriş' : 'E-posta ile Kayıt Ol'}</Text>
           )}
         </Pressable>
 
@@ -158,7 +158,7 @@ export function LoginScreen() {
           disabled={isLoading}
           style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed, isLoading && styles.disabled]}
         >
-          <Text style={styles.secondaryButtonLabel}>{mode === 'login' ? 'Google ile Giris (Demo)' : 'Google ile Kayit Ol (Demo)'}</Text>
+          <Text style={styles.secondaryButtonLabel}>{mode === 'login' ? 'Google ile Giriş (Demo)' : 'Google ile Kayıt Ol (Demo)'}</Text>
         </Pressable>
 
         <Pressable

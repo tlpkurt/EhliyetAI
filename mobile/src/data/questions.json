@@ -1,0 +1,103 @@
+[
+  {
+    "id": 1,
+    "kategori": "Trafik",
+    "soru": "Kırmızı ışıkta araç sürücüsü ne yapmalıdır?",
+    "secenekler": [
+      "Durmalı ve beklemeli",
+      "Hızla geçmeli",
+      "Yavaşlayıp dikkatli geçmeli",
+      "Sağa çekilmeli"
+    ],
+    "dogruCevap": 0,
+    "aciklama": "Kırmızı ışıkta durmak gereklidir."
+  },
+  {
+    "id": 2,
+    "kategori": "Motor",
+    "soru": "Motor yağı seviyesini ne sıklıkla kontrol etmelisiniz?",
+    "secenekler": ["Her 10000 km", "Her hafta", "Düzenli bakım aralıklarında", "Yılda bir"],
+    "dogruCevap": 2,
+    "aciklama": "Motor yağı bakım programına göre kontrol edilmelidir."
+  },
+  {
+    "id": 3,
+    "kategori": "Ilk Yardim",
+    "soru": "Bilinçsiz bir kişiye ilk müdahalede önce ne kontrol edilir?",
+    "secenekler": ["Nefes alıyor mu?", "Kanama miktarı", "Kıyafetleri", "Kimliği"],
+    "dogruCevap": 0,
+    "aciklama": "Hava yolu ve solunum kontrolü ilk önceliktir."
+  },
+  {
+    "id": 4,
+    "kategori": "Trafik Adabi",
+    "soru": "Yaya geçidinde yayaya yol vermek kimin sorumluluğudur?",
+    "secenekler": ["Sürücünün", "Yayanın", "Polisin", "Hiçbiri"],
+    "dogruCevap": 0,
+    "aciklama": "Sürücüler yayalara öncelik vermelidir."
+  },
+  {
+    "id": 5,
+    "kategori": "Trafik",
+    "soru": "Şerit değiştirmeden önce hangi aynayı kontrol etmelisiniz?",
+    "secenekler": ["İç dikiz aynası", "Yan aynalar ve kör nokta kontrolü", "Sadece sol ayna", "Korunmadan"],
+    "dogruCevap": 1,
+    "aciklama": "Yan aynalar ve omuz kontrolü ile kör nokta kontrol edilmelidir."
+  },
+  {
+    "id": 6,
+    "kategori": "Motor",
+    "soru": "Lastik basıncı düşerse ne olur?",
+    "secenekler": ["Yakıt tüketimi artar", "Yol tutuşu bozulur", "Her iki durum", "Hiçbiri"],
+    "dogruCevap": 2,
+    "aciklama": "Düşük lastik basıncı hem yakıt tüketimini hem yol tutuşunu etkiler."
+  },
+  {
+    "id": 7,
+    "kategori": "Ilk Yardim",
+    "soru": "Şiddetli kanamalarda ilk yapılacak şey nedir?",
+    "secenekler": ["Basınç uygulamak", "Sabitlemek", "Hemen hareket ettirmek", "Su dökmek"],
+    "dogruCevap": 0,
+    "aciklama": "Direkt basınç uygulamak kanamayı kontrol etmekte etkilidir."
+  },
+  {
+    "id": 8,
+    "kategori": "Trafik Adabi",
+    "soru": "Aracınızı park ederken hangi kurala dikkat etmelisiniz?",
+    "secenekler": ["Engelli alanlarını işgal etmeme", "Makul mesafe bırakma", "Park izni varsa sadece oraya park etme", "Hepsi"],
+    "dogruCevap": 3,
+    "aciklama": "Doğru park uygulamaları herkesin güvenliği içindir."
+  },
+  {
+    "id": 9,
+    "kategori": "Trafik",
+    "soru": "Hız sınırı olan bir yolda hız sınırına uymanın en önemli nedeni nedir?",
+    "secenekler": ["Ceza yememek", "Güvenlik", "Yakıt tasarrufu", "Trafik akışı"],
+    "dogruCevap": 1,
+    "aciklama": "Hız sınırları güvenlik için belirlenir."
+  },
+  {
+    "id": 10,
+    "kategori": "Motor",
+    "soru": "Araç çalışmıyorsa önce hangi adımı kontrol etmelisiniz?",
+    "secenekler": ["Akü bağlantıları", "Lastik basıncı", "Yağ seviyesi", "Cam silecekleri"],
+    "dogruCevap": 0,
+    "aciklama": "Akü bağlantıları ve şarj durumu genelde ilk kontrol edilendir."
+  },
+  {
+    "id": 11,
+    "kategori": "Ilk Yardim",
+    "soru": "Yanık yaralanmasında ilk yapılmaması gereken nedir?",
+    "secenekler": ["Soğuk su uygulamak", "Yağ veya tereyağı sürmek", "Steril örtü kullanmak", "Sert kimyasal temizlemek"],
+    "dogruCevap": 1,
+    "aciklama": "Yağ veya tereyağı sürmek enfeksiyon riskini artırır."
+  },
+  {
+    "id": 12,
+    "kategori": "Trafik Adabi",
+    "soru": "Korna kullanımı için doğru davranış hangisidir?",
+    "secenekler": ["Sürekli ve gereksiz kullanmak", "Acil durumlarda veya uyarma amaçlı kısa kullanmak", "Dar alanlarda uzun süreli kullanmak", "Hiç kullanmamak"],
+    "dogruCevap": 1,
+    "aciklama": "Korna genelde uyarı amaçlı kısa kullanılmalıdır."
+  }
+]

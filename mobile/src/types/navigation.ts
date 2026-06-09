@@ -1,7 +1,10 @@
 export type RootStackParamList = {
   Home: undefined;
-  QuestionSolve: undefined;
+  QuestionSolve: { category?: string } | undefined;
   MockExam: undefined;
+  ExamSession: { examId: string } | undefined;
   AIAnalysis: undefined;
   Statistics: undefined;
+  LessonDetail: { lessonId: string } | undefined;
+  TopicDetail: { lessonId: string; topicId: string } | undefined;
 };

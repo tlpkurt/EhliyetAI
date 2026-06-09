@@ -16,7 +16,7 @@ export function AppHeader({ title, subtitle }: AppHeaderProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 20,
+    marginBottom: 22,
   },
   title: {
     fontSize: 28,

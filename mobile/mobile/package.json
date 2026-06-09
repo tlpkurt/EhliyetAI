@@ -1,5 +1,13 @@
 {
   "dependencies": {
-    "@react-navigation/bottom-tabs": "^7.15.9"
-  }
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-navigation/bottom-tabs": "^7.15.9",
+    "expo": "~55.0.8",
+    "expo-av": "^16.0.8",
+    "react": "19.2.0",
+    "react-native": "0.83.2"
+  },
+  "name": "mobile",
+  "version": "1.0.0",
+  "scripts": {}
 }

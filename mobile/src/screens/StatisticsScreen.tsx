@@ -7,12 +7,12 @@ export function StatisticsScreen() {
   return (
     <View style={styles.container}>
       <AppHeader
-        title="Istatistikler"
-        subtitle="Cozulen soru, basari orani ve gelisim grafigi gibi metrikler bu ekranda yer alacak."
+        title="İstatistikler"
+        subtitle="Çözülen soru, başarı oranı ve gelişim grafiği gibi metrikler bu ekranda yer alacak."
       />
 
       <AppCard>
-        <Text style={styles.placeholder}>Bu alan 6. hafta gorevleri icin ayrildi.</Text>
+        <Text style={styles.placeholder}>Bu alan 6. hafta görevleri için ayrıldı.</Text>
       </AppCard>
     </View>
   );

@@ -20,10 +20,16 @@
 - Durum: Tamamlandi (06.04.2026)
 
 ## 4. Hafta
-- Soru veri modeli ve soru bankasi yapisi
-- Soru Cozme modu: kategori bazli soru gosterimi
-- Cevap kontrolu ve aninda dogru/yanlis geri bildirimi
-- Cikti: Trafik, Motor, Ilk Yardim, Trafik Adabi kategorilerinde soru cozumu
+-- Durum: In progress (hafta basladi)
+- Görevler:
+	- [ ] Soru veri modelini tanımla (`id`, `kategori`, `soru`, `secenekler`, `dogruCevap`, `aciklama`)
+	- [ ] Basit lokal soru bankası JSON dosyası oluştur (örnek 20 soru, 4 kategori)
+	- [ ] `QuestionSolveScreen` UI iskeletini ekle (soru+secenekler, sonraki/onceki)
+	- [ ] Cevap kontrol mantığını uygula (aninda geri bildirim ve dogru/yanlis gösterimi)
+	- [ ] Kategori filtreleme ve rastgele soru çekme fonksiyonu
+	- [ ] Basit unit testi veya manuel kontrol listesiyle dogrula
+-- Cikti: Trafik, Motor, Ilk Yardim, Trafik Adabi kategorilerinde temel soru cozumu
+-- Not: Tamamlandiginda `Durum: Tamamlandi (tarih)` olarak isaretle
 
 ## 5. Hafta
 - Deneme sinavi modulu (50 soru, sureli sinav)
