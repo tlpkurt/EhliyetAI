@@ -4,16 +4,19 @@ import { createContext, ReactNode, useContext, useEffect, useMemo, useState } fr
 import { AuthUser, UserProfile } from '../types/auth';
 
 const SESSION_KEY = 'ehliyetai.session.v1';
+const ONBOARDING_KEY = 'ehliyetai.onboarding.v1';
 
 type AuthContextValue = {
   user: AuthUser | null;
   isInitializing: boolean;
+  hasSeenOnboarding: boolean;
   loginWithEmail: (email: string, password: string) => Promise<void>;
   registerWithEmail: (fullName: string, email: string, password: string, confirmPassword: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   continueAsGuest: () => Promise<void>;
   updateProfile: (profile: Partial<UserProfile>) => Promise<void>;
   logout: () => Promise<void>;
+  completeOnboarding: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -35,17 +38,28 @@ function normalizeNameFromEmail(email: string): string {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
 
   useEffect(() => {
     async function hydrateSession() {
       try {
         const rawSession = await AsyncStorage.getItem(SESSION_KEY);
+        const rawOnboarding = await AsyncStorage.getItem(ONBOARDING_KEY);
+
+        if (rawOnboarding === 'true') {
+          setHasSeenOnboarding(true);
+        }
 
         if (!rawSession) {
           return;
         }
 
         const parsedSession = JSON.parse(rawSession) as AuthUser;
+        
+        if (parsedSession.provider === 'guest') {
+          setHasSeenOnboarding(false);
+        }
+        
         setUser(parsedSession);
       } catch {
         setUser(null);
@@ -56,6 +70,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     hydrateSession();
   }, []);
+
+  async function completeOnboarding() {
+    await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
+    setHasSeenOnboarding(true);
+  }
 
   async function persistUser(nextUser: AuthUser | null) {
     setUser(nextUser);
@@ -122,6 +141,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     };
 
+    setHasSeenOnboarding(false);
+    await AsyncStorage.removeItem(ONBOARDING_KEY);
     await persistUser(nextUser);
   }
 
@@ -141,6 +162,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function continueAsGuest() {
+    setHasSeenOnboarding(false);
+    await AsyncStorage.removeItem(ONBOARDING_KEY);
+
     const nextUser: AuthUser = {
       id: `guest-${Date.now()}`,
       provider: 'guest',
@@ -177,14 +201,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       user,
       isInitializing,
+      hasSeenOnboarding,
       loginWithEmail,
       registerWithEmail,
       loginWithGoogle,
       continueAsGuest,
       updateProfile,
       logout,
+      completeOnboarding,
     }),
-    [user, isInitializing],
+    [user, isInitializing, hasSeenOnboarding],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

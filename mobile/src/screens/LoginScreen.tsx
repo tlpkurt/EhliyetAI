@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
-import { AppCard } from '../components/AppCard';
-import { AppHeader } from '../components/AppHeader';
 import { useAuth } from '../context/AuthContext';
 
 export function LoginScreen() {
@@ -14,6 +14,7 @@ export function LoginScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [focusedInput, setFocusedInput] = useState<string | null>(null);
 
   async function handleEmailLogin() {
     setError(null);
@@ -71,207 +72,340 @@ export function LoginScreen() {
     }
   }
 
-  return (
-    <View style={styles.container}>
-      <AppHeader
-        title="Ehliyet Asistanı"
-        subtitle={
-          mode === 'login'
-            ? 'E-posta, Google veya misafir girişi ile çalışmana kaldığın yerden devam et.'
-            : 'Hızlı bir hesap oluştur ve ilerlemeni kaydetmeye başla.'
-        }
-      />
+  const toggleMode = () => {
+    setMode(mode === 'login' ? 'register' : 'login');
+    setError(null);
+  };
 
-      <AppCard>
-        <View style={styles.modeSwitcher}>
-          <Pressable
-            onPress={() => setMode('login')}
-            style={({ pressed }) => [styles.modeButton, mode === 'login' && styles.modeButtonActive, pressed && styles.pressed]}
+  const renderInput = (
+    id: string,
+    icon: keyof typeof Ionicons.glyphMap,
+    placeholder: string,
+    value: string,
+    onChangeText: (text: string) => void,
+    secureTextEntry?: boolean,
+    keyboardType?: 'default' | 'email-address'
+  ) => {
+    const isFocused = focusedInput === id;
+    return (
+      <View style={[styles.inputContainer, isFocused && styles.inputContainerFocused]}>
+        <Ionicons name={icon} size={22} color={isFocused ? '#0f766e' : '#9ca3af'} style={styles.inputIcon} />
+        <TextInput
+          style={styles.input}
+          placeholder={placeholder}
+          placeholderTextColor="#9ca3af"
+          value={value}
+          onChangeText={onChangeText}
+          secureTextEntry={secureTextEntry}
+          keyboardType={keyboardType}
+          autoCapitalize="none"
+          editable={!isLoading}
+          onFocus={() => setFocusedInput(id)}
+          onBlur={() => setFocusedInput(null)}
+        />
+      </View>
+    );
+  };
+
+  return (
+    <KeyboardAvoidingView 
+      style={styles.container} 
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        
+        {/* Header Section */}
+        <View style={styles.headerContainer}>
+          <LinearGradient
+            colors={['#0f766e', '#14b8a6']}
+            style={styles.iconContainer}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
           >
-            <Text style={[styles.modeButtonLabel, mode === 'login' && styles.modeButtonLabelActive]}>Giriş Yap</Text>
+            <Ionicons name="car-sport" size={44} color="#ffffff" />
+          </LinearGradient>
+          <Text style={styles.title}>EhliyetAI</Text>
+          <Text style={styles.subtitle}>
+            {mode === 'login' 
+              ? 'Tekrar hoş geldin! Sınava hazırlanmaya devam et.' 
+              : 'Yolculuğa başla! Hemen bir hesap oluştur.'}
+          </Text>
+        </View>
+
+        {/* Form Section */}
+        <View style={styles.formContainer}>
+          {mode === 'register' && (
+            renderInput('fullname', 'person-outline', 'Ad Soyad', fullName, setFullName)
+          )}
+
+          {renderInput('email', 'mail-outline', 'E-posta Adresi', email, setEmail, false, 'email-address')}
+
+          {renderInput('password', 'lock-closed-outline', 'Şifre', password, setPassword, true)}
+
+          {mode === 'register' && (
+            renderInput('confirmPassword', 'lock-closed-outline', 'Şifre (Tekrar)', confirmPassword, setConfirmPassword, true)
+          )}
+
+          {mode === 'login' && (
+            <Pressable style={styles.forgotPassword}>
+              <Text style={styles.forgotPasswordText}>Şifremi Unuttum</Text>
+            </Pressable>
+          )}
+
+          {error ? (
+            <View style={styles.errorContainer}>
+              <Ionicons name="alert-circle" size={18} color="#ef4444" />
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          ) : null}
+
+          {/* Primary Submit Button */}
+          <Pressable
+            onPress={mode === 'login' ? handleEmailLogin : handleEmailRegister}
+            disabled={isLoading}
+            style={({ pressed }) => [styles.primaryButtonWrapper, pressed && styles.pressed, isLoading && styles.disabled]}
+          >
+            <LinearGradient
+              colors={['#0f766e', '#115e59']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.primaryButton}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="#ffffff" />
+              ) : (
+                <Text style={styles.primaryButtonLabel}>{mode === 'login' ? 'Giriş Yap' : 'Hesap Oluştur'}</Text>
+              )}
+            </LinearGradient>
           </Pressable>
+
+          <View style={styles.dividerContainer}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>ya da şununla devam et</Text>
+            <View style={styles.dividerLine} />
+          </View>
+
+          {/* Google Button */}
           <Pressable
-            onPress={() => setMode('register')}
-            style={({ pressed }) => [styles.modeButton, mode === 'register' && styles.modeButtonActive, pressed && styles.pressed]}
+            onPress={handleGoogleLogin}
+            disabled={isLoading}
+            style={({ pressed }) => [styles.googleButton, pressed && styles.pressed, isLoading && styles.disabled]}
           >
-            <Text style={[styles.modeButtonLabel, mode === 'register' && styles.modeButtonLabelActive]}>Kayıt Ol</Text>
+            <Ionicons name="logo-google" size={20} color="#374151" style={styles.googleIcon} />
+            <Text style={styles.googleButtonLabel}>Google</Text>
+          </Pressable>
+
+        </View>
+
+        {/* Footer Links */}
+        <View style={styles.footerContainer}>
+          <Pressable onPress={toggleMode} style={styles.toggleModeContainer}>
+            <Text style={styles.toggleModeText}>
+              {mode === 'login' ? "Hesabın yok mu? " : "Zaten bir hesabın var mı? "}
+              <Text style={styles.toggleModeTextHighlight}>
+                {mode === 'login' ? "Kayıt Ol" : "Giriş Yap"}
+              </Text>
+            </Text>
+          </Pressable>
+
+          <Pressable
+            onPress={handleGuestLogin}
+            disabled={isLoading}
+            style={styles.guestButton}
+          >
+            <Text style={styles.guestButtonLabel}>Şimdilik misafir olarak devam et</Text>
           </Pressable>
         </View>
 
-        {mode === 'register' ? (
-          <>
-            <Text style={styles.label}>Ad Soyad</Text>
-            <TextInput value={fullName} onChangeText={setFullName} editable={!isLoading} placeholder="Ad Soyad" style={styles.input} />
-          </>
-        ) : null}
-
-        <Text style={styles.label}>E-posta</Text>
-        <TextInput
-          autoCapitalize="none"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-          editable={!isLoading}
-          placeholder="ornek@mail.com"
-          style={styles.input}
-        />
-
-        <Text style={styles.label}>Şifre</Text>
-        <TextInput
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-          editable={!isLoading}
-          placeholder="Şifre"
-          style={styles.input}
-        />
-
-        {mode === 'register' ? (
-          <>
-            <Text style={styles.label}>Şifre Tekrar</Text>
-            <TextInput
-              secureTextEntry
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              editable={!isLoading}
-              placeholder="Şifre Tekrar"
-              style={styles.input}
-            />
-          </>
-        ) : null}
-
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-        <Pressable
-          onPress={mode === 'login' ? handleEmailLogin : handleEmailRegister}
-          style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
-        >
-          {isLoading ? (
-            <ActivityIndicator color="#ffffff" />
-          ) : (
-            <Text style={styles.primaryButtonLabel}>{mode === 'login' ? 'E-posta ile Giriş' : 'E-posta ile Kayıt Ol'}</Text>
-          )}
-        </Pressable>
-
-        <Pressable
-          onPress={handleGoogleLogin}
-          disabled={isLoading}
-          style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed, isLoading && styles.disabled]}
-        >
-          <Text style={styles.secondaryButtonLabel}>{mode === 'login' ? 'Google ile Giriş (Demo)' : 'Google ile Kayıt Ol (Demo)'}</Text>
-        </Pressable>
-
-        <Pressable
-          onPress={handleGuestLogin}
-          disabled={isLoading}
-          style={({ pressed }) => [styles.ghostButton, pressed && styles.pressed, isLoading && styles.disabled]}
-        >
-          <Text style={styles.ghostButtonLabel}>Misafir Olarak Devam Et</Text>
-        </Pressable>
-      </AppCard>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eef2ff',
-    padding: 20,
+    backgroundColor: '#ffffff', // Clean white background for a modern feel
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 28,
+    paddingTop: 80,
+    paddingBottom: 40,
     justifyContent: 'center',
   },
-  modeSwitcher: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 14,
-  },
-  modeButton: {
-    flex: 1,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    backgroundColor: '#ffffff',
+  headerContainer: {
     alignItems: 'center',
-    paddingVertical: 9,
+    marginBottom: 40,
   },
-  modeButtonActive: {
-    borderColor: '#0f766e',
-    backgroundColor: '#ecfdf5',
+  iconContainer: {
+    width: 88,
+    height: 88,
+    borderRadius: 28, // Apple-style squircle look
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+    shadowColor: '#0f766e',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
+    elevation: 10,
   },
-  modeButtonLabel: {
-    color: '#374151',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  modeButtonLabelActive: {
-    color: '#065f46',
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
+  title: {
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#0f172a',
+    letterSpacing: -0.5,
     marginBottom: 8,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 11,
-    marginBottom: 14,
-    color: '#111827',
+  subtitle: {
+    fontSize: 16,
+    color: '#64748b',
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  formContainer: {
+    gap: 16, // Space between form elements
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f8fafc',
+    borderWidth: 1.5,
+    borderColor: 'transparent',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    height: 60, // Taller inputs for a more premium feel
+  },
+  inputContainerFocused: {
     backgroundColor: '#ffffff',
+    borderColor: '#0f766e',
+    shadowColor: '#0f766e',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+  inputIcon: {
+    marginRight: 12,
+  },
+  input: {
+    flex: 1,
+    height: '100%',
+    color: '#1e293b',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  forgotPassword: {
+    alignSelf: 'flex-end',
+    marginTop: -8,
+    marginBottom: 4,
+  },
+  forgotPasswordText: {
+    color: '#0f766e',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fef2f2',
+    padding: 14,
+    borderRadius: 12,
   },
   errorText: {
     color: '#b91c1c',
-    marginBottom: 12,
-    fontSize: 13,
+    fontSize: 14,
+    marginLeft: 10,
+    flex: 1,
+    fontWeight: '500',
+  },
+  primaryButtonWrapper: {
+    marginTop: 8,
+    shadowColor: '#0f766e',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8,
   },
   primaryButton: {
-    marginTop: 4,
-    borderRadius: 12,
-    backgroundColor: '#0f766e',
-    paddingVertical: 14,
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 16,
+    height: 60,
   },
   primaryButtonLabel: {
     color: '#ffffff',
+    fontSize: 18,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 24,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#f1f5f9',
+  },
+  dividerText: {
+    marginHorizontal: 16,
+    color: '#94a3b8',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  googleButton: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderWidth: 1.5,
+    borderColor: '#f1f5f9',
+    borderRadius: 16,
+    height: 60,
+  },
+  googleIcon: {
+    marginRight: 12,
+  },
+  googleButtonLabel: {
+    color: '#334155',
     fontSize: 16,
     fontWeight: '700',
   },
-  secondaryButton: {
-    marginTop: 10,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#0ea5e9',
-    backgroundColor: '#f0f9ff',
-    paddingVertical: 14,
+  footerContainer: {
+    marginTop: 40,
     alignItems: 'center',
+    gap: 20,
   },
-  secondaryButtonLabel: {
-    color: '#075985',
+  toggleModeContainer: {
+    padding: 8,
+  },
+  toggleModeText: {
+    color: '#64748b',
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: '500',
   },
-  ghostButton: {
-    marginTop: 10,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    backgroundColor: '#ffffff',
-    paddingVertical: 14,
-    alignItems: 'center',
+  toggleModeTextHighlight: {
+    color: '#0f766e',
+    fontWeight: '700',
   },
-  ghostButtonLabel: {
-    color: '#374151',
+  guestButton: {
+    padding: 8,
+  },
+  guestButtonLabel: {
+    color: '#94a3b8',
     fontSize: 15,
     fontWeight: '600',
   },
   pressed: {
-    opacity: 0.88,
-    transform: [{ scale: 0.99 }],
+    opacity: 0.9,
+    transform: [{ scale: 0.98 }],
   },
   disabled: {
-    opacity: 0.6,
+    opacity: 0.7,
   },
 });
+

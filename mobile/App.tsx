@@ -16,6 +16,7 @@ import { TopicDetailScreen } from './src/screens/TopicDetailScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
 import { QuestionSolveScreen } from './src/screens/QuestionSolveScreen';
 import { ExamSessionScreen } from './src/screens/ExamSessionScreen';
+import { OnboardingScreen } from './src/screens/OnboardingScreen';
 
 type RootTabParamList = {
   Home: undefined;
@@ -49,7 +50,7 @@ function LessonsStackNavigator() {
 }
 
 function MainNavigator() {
-  const { user, isInitializing } = useAuth();
+  const { user, isInitializing, hasSeenOnboarding } = useAuth();
 
   if (isInitializing) {
     return (
@@ -61,6 +62,10 @@ function MainNavigator() {
 
   if (!user) {
     return <LoginScreen />;
+  }
+
+  if (!hasSeenOnboarding) {
+    return <OnboardingScreen />;
   }
 
   return (
